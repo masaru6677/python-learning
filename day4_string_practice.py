@@ -14,11 +14,7 @@ print(f"总字符数：{x}")
 #总单词数
 # split() 将字符串按照指定字符串切割 - 列表
 text_list1 = text.split()
-# y = 0
-# for i in text_list1:
-#     y += 1
-# print(f"此素材 总单词数为：{y}")
-#统计单词数不用循环 len() 字符串：字符数量 列表：里面有多少个元素
+#统计单词数不用循环  len() 字符串：字符数量 列表：里面有多少个元素
 print(f"总单词数：{len(text_list1)}")
 
 #总行数
@@ -27,25 +23,11 @@ z = text.count("\n")
 print(f"总行数：{z + 1}")
 
 #任务2: 提取所有邮箱
-#含并且只含一个 @ → 提示：count()
-#@ 前面至少 1 个字符
-#@ 后面要有一个 .，而且 . 不能在最后 → 提示：rfind() 找最后一个点的位置，跟 len() 比一比
 mail = []
 mail_num = 0
-# text_list2 = []
-# t1 = []
-# #去掉后面提取邮箱时，邮箱带有","及冗余字符的情况
-# for j in text_list1:
-#     if j.count("，") == 0:
-#         text_list2.append(j)
-#     else:
-#         #split() 将字符串按照指定字符串切割 - 列表
-#         t1 = j.split("，")
-#         text_list2 += t1
-#         #clear() 原地清空列表
-#         t1.clear()
-
-#改良过滤 re.split 可以一次性写多个分隔符
+#改良过滤 re.split
+# re.split 一次性切掉中文逗号、句号和空格
+# 注意：切开后会产生空字符串，不过空串过不了邮箱检查，暂时不处理
 import re
 text_list2 = re.split("[，。 ]", text)
 
@@ -55,6 +37,7 @@ for k in text_list2:
         # find() 查找指定字符串第一次出现的索引位置
         if k.find("@") != 0:#@ 前面至少 1 个字符
             #rfind()：从右往左查找，找到最后一个匹配的下标
+            # 【坑】这里两个点都要用 rfind。用 find 会取到第一个点，判断就错了
             if k.find("@") < k.rfind(".") and k.rfind(".") != len(k) - 1:#@ 后面要有一个 .，而且 . 不能在最后
                 mail.append(k)
                 mail_num += 1
@@ -62,20 +45,10 @@ print(f"此素材共有{mail_num}个邮箱，分别是{mail}")
 
 # 任务3: 提取所有日期
 # 判断标准：长度正好 10 个字符、第 5 位和第 8 位是 -、其余位是数字
-# text_list3 = []
-# t2 = []
-# #去掉后面提取日期时，日期带有"。"及冗余字符的情况
-# for l in text_list2:
-#     if l.count("。") == 0:
-#         text_list3.append(l)
-#     else:
-#         #split() 将字符串按照指定字符串切割 - 列表
-#         t2 = l.split("。")
-#         text_list3 += t2
-#         #clear() 原地清空列表
-#         t2.clear()
 
-#改良过滤 re.split 可以一次性写多个分隔符
+#改良过滤 re.split
+# re.split 一次性切掉中文逗号、句号和空格
+# 注意：切开后会产生空字符串，不过空串过不了邮箱检查，暂时不处理
 text_list3 = re.split("[，。 ]", text)
 
 #开始提取日期及日期个数

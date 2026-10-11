@@ -1,12 +1,3 @@
-# ========= 我的读书清单 =========
-# 1. 增
-# 2. 删
-# 3. 改
-# 4. 查
-# 5. 统计
-# 0. 退出
-# ================================
-
 #菜单
 menu = """
 ========= 我的读书清单 =========
@@ -18,13 +9,21 @@ menu = """
 6. 退出
 ================================
 """
-#清单 根据视频 清单本体是字典 内部嵌套字典作为详情
-#ai要求外层列表 内部嵌套字典    *****但是先按视频来
-books = {
-        "人类简史":{"books_author":"尤瓦尔·赫拉利","books_status":"在读"},
-        "活着":{"books_author":"余华","books_status":"读完"}
-                                                                     }
-# books = {}
+
+#json存取
+import json
+def load_books():
+    try:
+        with open("books.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_books(books):
+    with open("books.json", "w", encoding="utf-8") as f:
+        json.dump(books, f, ensure_ascii=False, indent=2)
+
+books = load_books()        # ← 启动时读
 
 #拦空输入
 def ask_not_empty(prompt):
@@ -51,58 +50,52 @@ while True:
             # 字典嵌套字典 作者、状态为外层字典的value值
             books_author = ask_not_empty("请输入作者：")
             while True:
-                books_status = input("请输入状态(想读/在读/读完)：")
+                books_status = input("请输入状态(想读/在读/读完)：").strip()
                 if books_status in ("想读","在读","读完"):
                     break
                 print(f"⚠️ 「{books_status}」不是有效状态")
             books[books_title] = {"books_author":books_author,"books_status":books_status}#增
+            save_books(books)
         #删
         case "2":
             while True:
-                books_title = input("请输入要删除的书名：")
+                books_title = ask_not_empty("请输入要删除的书名：")
                 if books_title in books:
                     break
                 print(f"⚠️ 「{books_title}」不是有效书名")
             del books[books_title]
+            save_books(books)
             print("删除成功")
         #改
         case "3":
             while True:
-                books_title = input("请输入要更改的书名：")
+                books_title = ask_not_empty("请输入要更改的书名：")
                 if books_title in books:
                     break
                 print(f"⚠️ 「{books_title}」不是有效书名")
             while True:
-                confirm_author = input("是否需要更改作者(是/否)：")
+                confirm_author = input("是否需要更改作者(是/否)：").strip()
                 if confirm_author not in ("是","否"):
                     print("请求错误!请重新选择：")
                     continue
                 elif confirm_author == "是":
-                    books_author = input("要将原作者更改成：")
-                    # for m in books.keys():
-                    #     if m == books_title:
-                    #         books_info = books[books_title]
-                    #         books_info["books_author"] = books_author
-                    #繁琐改良
+                    books_author = input("要将原作者更改成：").strip()
                     books[books_title]["books_author"] = books_author
+                    save_books(books)
                     break
                 elif confirm_author == "否":
                     break
             while True:
-                confirm_status = input("是否需要更改状态(是/否)：")
+                confirm_status = input("是否需要更改状态(是/否)：").strip()
                 if confirm_status not in ("是","否"):
                     print("请求错误!请重新选择：")
                     continue
                 elif confirm_status == "是":
                     while True:
-                        books_status = input("要将原状态更改成(想读/在读/读完)：")
+                        books_status = input("要将原状态更改成(想读/在读/读完)：").strip()
                         if books_status in ("想读","在读","读完"):
-                            # for n in books.keys():
-                            #     if n == books_title:
-                            #         books_info = books[books_title]
-                            #         books_info["books_status"] = books_status
-                            # 繁琐改良
                             books[books_title]["books_status"] = books_status
+                            save_books(books)
                             break
                         print(f"⚠️ 「{books_status}」不是有效状态")
                     break
